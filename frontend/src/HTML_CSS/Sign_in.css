@@ -1,0 +1,30 @@
+body {
+    background-color: #ffffff;
+}
+
+.signin-box {
+    background-color: #d3d3d3;
+    border-radius: 15px;
+    padding: 30px;
+    width: 100%;
+    max-width: 400px;
+}
+
+.logo-square {
+    width: 40px;
+    height: 40px;
+}
+
+.form-control {
+    border-radius: 8px;
+}
+
+.btn-danger {
+    border-radius: 8px;
+}
+
+@media (max-width: 576px) {
+    .signin-box {
+        width: 90%;
+    }
+}
