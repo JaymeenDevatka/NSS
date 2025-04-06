@@ -1,4 +1,42 @@
 This is Event Management System fot NSS * CHARUSAT
+
+📘 Project: NSS Event Management System
+The NSS Event Management System is a full-stack web application developed for efficiently managing and organizing National Service Scheme (NSS) activities at CHARUSAT University. The platform provides separate access for students and admins, allowing streamlined event creation, participation tracking, and report generation.
+
+🛠 Tech Stack
+🔹 Frontend (React.js):
+React.js: Component-based UI for dynamic rendering
+
+Axios: For making API calls to the backend
+
+React Router: Navigation and routing
+
+Bootstrap/Tailwind CSS (if used): For responsive design
+
+🔹 Backend (Node.js + Express.js):
+Node.js: Runtime environment
+
+Express.js: Server framework for handling routes and APIs
+
+JWT or Sessions: Authentication and security (assumed)
+
+🔹 Database (MySQL):
+MySQL: Stores user data, event details, participation records, etc.
+
+Sequelize / Knex.js (if used): ORM or query builder for DB interaction
+
+👨‍💻 Features
+🔐 User Authentication for Admins and Students
+
+🗓️ Event Creation and scheduling by Admin
+
+👥 Student Registration and Event Participation
+
+📊 Participation Reports and attendance
+
+📬 Notification System (optional/extendable)
+
+
 ![image](https://github.com/user-attachments/assets/2ee3fa6d-65d4-48b8-9c8c-4e1f9c1e3b5f)
 ![image](https://github.com/user-attachments/assets/85a9a2c4-ac60-4e50-8a1f-cc5f27c9331f)
 ![image](https://github.com/user-attachments/assets/a5d8abd2-e0a5-4ec9-be26-bb9527a2f508)
