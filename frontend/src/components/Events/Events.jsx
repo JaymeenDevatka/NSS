@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
-import EventForm from "./EventForm"; // ✅ Ensure this is imported
-import { v4 as uuidv4 } from "uuid";
+import RegistrationForm from "./RegistrationForm";
 
 const Events = () => {
     const [events, setEvents] = useState([]);
-    const [showForm, setShowForm] = useState(false);
+    const [selectedEvent, setSelectedEvent] = useState(null);
 
     // Fetch events from backend
     useEffect(() => {
@@ -14,82 +13,52 @@ const Events = () => {
             .catch((err) => console.error("Error fetching events:", err));
     }, []);
 
-    // Add event (send to backend)
-    const addEvent = async (event) => {
-        const newEvent = { ...event, id: uuidv4() };
-
-        try {
-            const response = await fetch("http://localhost:8080/api/events", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(newEvent),
-            });
-
-            if (response.ok) {
-                setEvents((prevEvents) => [...prevEvents, newEvent]);
-                setShowForm(false); // ✅ Close form after adding event
-            } else {
-                console.error("Failed to add event.");
-            }
-        } catch (error) {
-            console.error("Error adding event:", error);
-        }
-    };
-
-    // Remove event (send delete request to backend)
-    const removeEvent = async (id) => {
-        try {
-            const response = await fetch(`http://localhost:8080/api/events/${id}`, {
-                method: "DELETE",
-            });
-
-            if (response.ok) {
-                setEvents((prevEvents) => prevEvents.filter((event) => event.id !== id));
-            } else {
-                console.error("Failed to delete event.");
-            }
-        } catch (error) {
-            console.error("Error deleting event:", error);
-        }
-    };
-
     return (
-        <div className="h-full">
-            <div className="w-full px-10 mb-6">
-                <div className="flex justify-between items-center py-5 pb-10">
-                    <h1 className="text-2xl font-bold">Events</h1>
-                    <button
-                        onClick={() => setShowForm(true)}
-                        className="bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800"
-                    >
-                        + Create Event
-                    </button>
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
+            <div className="max-w-6xl mx-auto">
+                <div className="flex justify-between items-center mb-6">
+                    <h1 className="text-3xl font-extrabold text-gray-800">📅 Upcoming Events</h1>
                 </div>
 
-                {showForm && <EventForm closeForm={() => setShowForm(false)} addEvent={addEvent} />}
-
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-7 w-full">
+                {/* Events Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     {events.length > 0 ? (
                         events.map((event) => (
-                            <div key={event.id} className="p-4 border rounded-lg shadow-md">
-                                <h3 className="font-bold text-xl">{event.title}</h3>
-                                <p>📅 Date: {event.date}</p>
-                                <p>📍 Location: {event.venue}</p>
+                            <div 
+                                key={event.id} 
+                                className="bg-white p-5 rounded-lg shadow-md transition transform hover:scale-105 hover:shadow-lg border border-gray-200"
+                            >
+                                <h3 className="font-semibold text-xl mb-2 text-gray-900">{event.title}</h3>
+                                <p className="text-gray-600">📍 <span className="font-medium text-indigo-600">{event.venue}</span></p>
+                                <p className="text-gray-600">📅 <span className="font-medium text-green-600">{event.date}</span></p>
                                 <button
-                                    onClick={() => removeEvent(event.id)}
-                                    className="mt-2 text-red-500"
+                                    onClick={() => setSelectedEvent(event)}
+                                    className="mt-3 bg-indigo-500 text-white px-4 py-2 rounded-md hover:bg-indigo-600 transition"
                                 >
-                                    Remove
+                                    Register
                                 </button>
                             </div>
                         ))
                     ) : (
-                        <p className="col-span-3 py-5 text-center text-gray-500">No events available.</p>
+                        <p className="col-span-3 text-center text-gray-500">No events available.</p>
                     )}
                 </div>
             </div>
+
+            {/* Registration Form Modal */}
+            {selectedEvent && (
+                <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-40 p-4">
+                    <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg relative">
+                        <button 
+                            onClick={() => setSelectedEvent(null)} 
+                            className="absolute top-2 right-2 text-gray-500 hover:text-gray-800 text-xl"
+                        >
+                            ✖
+                        </button>
+                        <RegistrationForm event={selectedEvent} closeForm={() => setSelectedEvent(null)} />
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
