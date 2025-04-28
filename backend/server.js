@@ -547,7 +547,7 @@ app.post("/signin", (req, res) => {
 // ✅ Event Routes
 // ==========================
 app.get("/api/events/all", (req, res) => {
-  db.query("SELECT * FROM events", (err, results) => {
+  db.query("SELECT * FROM events ORDER BY date ASC", (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(results);
   });
@@ -586,24 +586,37 @@ app.delete("/api/events/:id", (req, res) => {
 // ==========================
 // ✅ File Upload (Multer)
 // ==========================
+// Set up file storage with Multer
 const storage = multer.diskStorage({
   destination: "uploads/",
   filename: (req, file, cb) => {
     cb(null, Date.now() + path.extname(file.originalname));
   },
 });
-const upload = multer({ storage });
 
-app.post("/api/upload", upload.single("photo"), (req, res) => {
+const upload = multer({
+  storage,
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB limit
+});
+
+app.use(express.json());
+
+// Upload endpoint
+app.post("/api/photos/upload", upload.single("photo"), (req, res) => {
+  console.log("Received file:", req.file); // Debugging
   if (!req.file) return res.status(400).json({ error: "❌ No file uploaded." });
 
   const { originalname, filename } = req.file;
   const uploaded_at = new Date();
+
   db.query(
     "INSERT INTO photos (title, filename, uploaded_at) VALUES (?, ?, ?)",
     [originalname, filename, uploaded_at],
     (err, result) => {
-      if (err) return res.status(500).json({ error: "Database error" });
+      if (err) {
+        console.error("Database error:", err);
+        return res.status(500).json({ error: "Database error" });
+      }
       res.status(201).json({
         message: "✅ Photo uploaded",
         photo: { id: result.insertId, title: originalname, filename, uploaded_at },
@@ -611,6 +624,7 @@ app.post("/api/upload", upload.single("photo"), (req, res) => {
     }
   );
 });
+
 
 app.get("/api/photos", (req, res) => {
   db.query("SELECT * FROM photos", (err, results) => {

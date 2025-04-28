@@ -1,195 +1,239 @@
+// import React, { useState, useEffect } from "react";
+// import axios from "axios";
+
+// const Photos = () => {
+//   const [photosByEvent, setPhotosByEvent] = useState({});
+//   const [loading, setLoading] = useState(true);
+//   const [events, setEvents] = useState([]);
+//   const [uploadForm, setUploadForm] = useState({
+//     title: "",
+//     eventId: "",
+//     file: null
+//   });
+//   const [uploading, setUploading] = useState(false);
+
+//   useEffect(() => {
+//     fetchPhotos();
+//     fetchEvents();
+//   }, []);
+
+//   const fetchPhotos = async () => {
+//     try {
+//       const response = await axios.get("http://localhost:8080/api/photos");
+//       const groupedPhotos = {};
+
+//       response.data.forEach(photo => {
+//         if (!groupedPhotos[photo.event_title]) {
+//           groupedPhotos[photo.event_title] = [];
+//         }
+//         groupedPhotos[photo.event_title].push(photo);
+//       });
+
+//       setPhotosByEvent(groupedPhotos);
+//     } catch (error) {
+//       console.error("Error fetching photos:", error);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   const fetchEvents = async () => {
+//     try {
+//       const response = await axios.get("http://localhost:8080/api/events/all");
+//       setEvents(response.data);
+//     } catch (error) {
+//       console.error("Error fetching events:", error);
+//     }
+//   };
+
+//   const handleInputChange = (e) => {
+//     const { name, value, files } = e.target;
+//     if (name === "file") {
+//       setUploadForm({ ...uploadForm, file: files[0] });
+//     } else {
+//       setUploadForm({ ...uploadForm, [name]: value });
+//     }
+//   };
+
+//   const handleUpload = async (e) => {
+//     e.preventDefault();
+
+//     if (!uploadForm.title || !uploadForm.eventId || !uploadForm.file) {
+//       alert("Please fill all fields and select a file.");
+//       return;
+//     }
+
+//     const formData = new FormData();
+//     formData.append("title", uploadForm.title);
+//     formData.append("event_id", uploadForm.eventId);
+//     formData.append("photo", uploadForm.file); // Changed 'file' to 'photo'
+
+//     try {
+//       setUploading(true);
+//       const response = await axios.post("http://localhost:8080/api/photos/upload", formData, {
+//         headers: {
+//           "Content-Type": "multipart/form-data",
+//         },
+//       });
+//       alert(response.data.message); // Show success message
+//       setUploadForm({ title: "", eventId: "", file: null });
+//       fetchPhotos(); // Refresh gallery after upload
+//     } catch (error) {
+//       console.error("Error uploading photo:", error);
+//       alert("Error uploading photo. Please try again.");
+//     } finally {
+//       setUploading(false);
+//     }
+//   };
+
+//   return (
+//     <div className="w-full min-h-screen p-8 bg-gradient-to-br from-purple-400 via-pink-500 to-orange-400">
+//       <div className="flex flex-col justify-center items-center mb-8 gap-4">
+//         <h1 className="text-3xl font-bold text-white">📸 Colorful Photo Gallery</h1>
+//       </div>
+
+//       {/* Upload Form */}
+//       <div className="max-w-xl mx-auto mb-10 bg-white p-6 rounded-lg shadow-lg">
+//         <h2 className="text-xl font-bold mb-4 text-gray-800">Upload New Photo</h2>
+//         <form onSubmit={handleUpload} className="flex flex-col gap-4">
+//           <input
+//             type="text"
+//             name="title"
+//             placeholder="Photo Title"
+//             value={uploadForm.title}
+//             onChange={handleInputChange}
+//             className="p-2 border rounded"
+//           />
+//           <select
+//             name="eventId"
+//             value={uploadForm.eventId}
+//             onChange={handleInputChange}
+//             className="p-2 border rounded"
+//           >
+//             <option value="">Select Event</option>
+//             {events.map(event => (
+//               <option key={event.id} value={event.id}>{event.title}</option>
+//             ))}
+//           </select>
+//           <input
+//             type="file"
+//             name="file"
+//             accept="image/*"
+//             onChange={handleInputChange}
+//             className="p-2"
+//           />
+//           <button
+//             type="submit"
+//             disabled={uploading}
+//             className="bg-purple-600 text-white font-semibold py-2 px-4 rounded hover:bg-purple-800 transition"
+//           >
+//             {uploading ? "Uploading..." : "Upload Photo"}
+//           </button>
+//         </form>
+//       </div>
+
+//       {/* Photos Gallery */}
+//       {loading ? (
+//         <p className="text-white text-center text-xl animate-pulse">Loading photos...</p>
+//       ) : (
+//         Object.keys(photosByEvent).length > 0 ? (
+//           Object.keys(photosByEvent).map(eventTitle => (
+//             <div key={eventTitle} className="mb-10">
+//               <h2 className="text-2xl font-bold text-white mb-4">{eventTitle}</h2>
+//               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+//                 {photosByEvent[eventTitle].map(photo => (
+//                   <div key={photo.id} className="bg-white shadow-lg p-4 rounded-lg relative transform transition hover:scale-105 hover:shadow-2xl">
+//                     <img
+//                       src={`http://localhost:8080/uploads/${photo.filename}`}
+//                       alt={photo.title}
+//                       className="h-40 w-full object-cover rounded-lg border-2 border-gray-300"
+//                       loading="lazy"
+//                     />
+//                     <h2 className="mt-2 font-semibold text-gray-800">{photo.title}</h2>
+//                     <p className="text-sm text-gray-500">{photo.uploaded_at}</p>
+//                   </div>
+//                 ))}
+//               </div>
+//             </div>
+//           ))
+//         ) : (
+//           <p className="text-white text-center text-lg">No photos uploaded yet.</p>
+//         )
+//       )}
+//     </div>
+//   );
+// };
+
+// export default Photos;
+
+
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 const Photos = () => {
-    const [photos, setPhotos] = useState([]);
-    const [selectedFile, setSelectedFile] = useState(null);
-    const [previewUrl, setPreviewUrl] = useState("");
-    const [uploadProgress, setUploadProgress] = useState(0);
-    const [loading, setLoading] = useState(true);
+  const [photosByEvent, setPhotosByEvent] = useState({});
+  const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        fetchPhotos();
-    }, []);
+  useEffect(() => {
+    fetchPhotos();
+  }, []);
 
-    // Fetch all photos from the backend
-    const fetchPhotos = async () => {
-        try {
-            const response = await axios.get("http://localhost:8080/api/photos");
-            setPhotos(response.data);
-        } catch (error) {
-            console.error("Error fetching photos:", error);
-        } finally {
-            setLoading(false);
+  const fetchPhotos = async () => {
+    try {
+      const response = await axios.get("http://localhost:8080/api/photos");
+      const groupedPhotos = {};
+
+      response.data.forEach(photo => {
+        if (!groupedPhotos[photo.event_title]) {
+          groupedPhotos[photo.event_title] = [];
         }
-    };
+        groupedPhotos[photo.event_title].push(photo);
+      });
 
-    // Handle file selection and preview
-    const handleFileChange = (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            setSelectedFile(file);
-            setPreviewUrl(URL.createObjectURL(file));
-        }
-    };
+      setPhotosByEvent(groupedPhotos);
+    } catch (error) {
+      console.error("Error fetching photos:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    // Trigger file input on "Add Photo" button click
-    const triggerFileSelect = () => {
-        document.getElementById("fileInput").click();
-    };
+  return (
+    <div className="w-full min-h-screen p-8 bg-gradient-to-br from-purple-400 via-pink-500 to-orange-400">
+      <div className="flex flex-col justify-center items-center mb-8 gap-4">
+        <h1 className="text-3xl font-bold text-white">📸 Colorful Photo Gallery</h1>
+      </div>
 
-    // Handle file upload
-    const handleUpload = async () => {
-        if (!selectedFile) return alert("❌ Please select a file!");
-
-        const formData = new FormData();
-        formData.append("photo", selectedFile);
-
-        try {
-            const response = await axios.post("http://localhost:8080/api/upload", formData, {
-                onUploadProgress: (progressEvent) => {
-                    const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-                    setUploadProgress(percentCompleted);
-                },
-            });
-
-            alert(response.data.message);
-            setPhotos([...photos, response.data.photo]);
-            setSelectedFile(null);
-            setPreviewUrl("");
-            setUploadProgress(0);
-        } catch (error) {
-            alert("❌ Upload failed! Try again.");
-            console.error("Upload error:", error);
-        }
-    };
-
-    // Handle photo deletion
-    const handleDelete = async (photoId) => {
-        try {
-            await axios.delete(`http://localhost:8080/api/photos/${photoId}`);
-            setPhotos(photos.filter((photo) => photo.id !== photoId));
-            alert("✅ Photo deleted successfully");
-        } catch (error) {
-            alert("❌ Error: Unable to delete photo.");
-            console.error("Delete error:", error);
-        }
-    };
-
-    // Handle photo download
-    const handleDownload = (filename) => {
-        const url = `http://localhost:8080/uploads/${filename}`;
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = filename;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    };
-
-    return (
-        <div className="w-full min-h-screen p-8 bg-gradient-to-br from-purple-400 via-pink-500 to-orange-400">
-            {/* Header Section */}
-            <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
-                <h1 className="text-3xl font-bold text-white">📸 Colorful Photo Gallery</h1>
-
-                <div className="flex flex-wrap items-center gap-3 justify-center md:justify-start relative z-10">
-                    {/* Hidden File Input */}
-                    <input 
-                        type="file" 
-                        id="fileInput"
-                        className="hidden"
-                        onChange={handleFileChange} 
+      {/* Photos Gallery */}
+      {loading ? (
+        <p className="text-white text-center text-xl animate-pulse">Loading photos...</p>
+      ) : (
+        Object.keys(photosByEvent).length > 0 ? (
+          Object.keys(photosByEvent).map(eventTitle => (
+            <div key={eventTitle} className="mb-10">
+              <h2 className="text-2xl font-bold text-white mb-4">{eventTitle}</h2>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {photosByEvent[eventTitle].map(photo => (
+                  <div key={photo.id} className="bg-white shadow-lg p-4 rounded-lg relative transform transition hover:scale-105 hover:shadow-2xl">
+                    <img
+                      src={`http://localhost:8080/uploads/${photo.filename}`}
+                      alt={photo.title}
+                      className="h-40 w-full object-cover rounded-lg border-2 border-gray-300"
+                      loading="lazy"
                     />
-                    
-                    {/* "Add Photo" Button (opens file picker) */}
-                    <button 
-                        onClick={triggerFileSelect}
-                        className="bg-gradient-to-r from-yellow-400 to-red-500 text-white px-4 py-2 rounded-lg hover:scale-105 transition"
-                    >
-                        ➕ Add Photo
-                    </button>
-
-                    {/* "Upload Photo" Button */}
-                    <button 
-                        onClick={handleUpload}
-                        className={`bg-gradient-to-r from-green-400 to-blue-500 text-white px-4 py-2 rounded-lg hover:scale-105 transition ${
-                            selectedFile ? "" : "opacity-50 cursor-not-allowed"
-                        }`}
-                        disabled={!selectedFile}
-                    >
-                        🚀 Upload Photo
-                    </button>
-                </div>
+                    <h2 className="mt-2 font-semibold text-gray-800">{photo.title}</h2>
+                    <p className="text-sm text-gray-500">{photo.uploaded_at}</p>
+                  </div>
+                ))}
+              </div>
             </div>
-
-            {/* Preview Image Before Upload */}
-            {previewUrl && (
-                <div className="mb-4 text-center">
-                    <h2 className="text-lg font-semibold text-white">Preview:</h2>
-                    <img 
-                        src={previewUrl} 
-                        alt="Preview" 
-                        className="h-40 w-auto rounded-lg shadow-lg border-4 border-white"
-                    />
-                </div>
-            )}
-
-            {/* Upload Progress Bar */}
-            {uploadProgress > 0 && (
-                <div className="w-full bg-gray-300 rounded-full h-4">
-                    <div
-                        className="bg-blue-600 h-4 rounded-full text-center text-white text-sm transition-all"
-                        style={{ width: `${uploadProgress}%` }}
-                    >
-                        {uploadProgress}%
-                    </div>
-                </div>
-            )}
-
-            {/* Photos Grid */}
-            {loading ? (
-                <p className="text-white text-center text-xl animate-pulse">Loading photos...</p>
-            ) : (
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                    {photos.length > 0 ? (
-                        photos.map((photo) => (
-                            <div 
-                                key={photo.id} 
-                                className="bg-white shadow-lg p-4 rounded-lg relative transform transition hover:scale-105 hover:shadow-2xl"
-                            >
-                                <img 
-                                    src={`http://localhost:8080/uploads/${photo.filename}`} 
-                                    alt={photo.title} 
-                                    className="h-40 w-full object-cover rounded-lg border-2 border-gray-300"
-                                    loading="lazy"
-                                />
-                                <h2 className="mt-2 font-semibold text-gray-800">{photo.title}</h2>
-                                <p className="text-sm text-gray-500">{photo.uploaded_at}</p>
-
-                                <div className="flex gap-2 mt-3">
-                                    <button 
-                                        onClick={() => handleDelete(photo.id)}
-                                        className="bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-700 transition"
-                                    >
-                                        ❌ Delete
-                                    </button>
-                                    <button 
-                                        onClick={() => handleDownload(photo.filename)}
-                                        className="bg-blue-500 text-white px-3 py-1 rounded-lg hover:bg-blue-700 transition"
-                                    >
-                                        ⬇ Download
-                                    </button>
-                                </div>
-                            </div>
-                        ))
-                    ) : (
-                        <p className="text-white text-center text-lg">No photos uploaded yet.</p>
-                    )}
-                </div>
-            )}
-        </div>
-    );
+          ))
+        ) : (
+          <p className="text-white text-center text-lg">No photos uploaded yet.</p>
+        )
+      )}
+    </div>
+  );
 };
 
 export default Photos;

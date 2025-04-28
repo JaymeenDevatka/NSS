@@ -10,6 +10,14 @@ const FeedbackForm = () => {
   const [comments, setComments] = useState("");
   const [message, setMessage] = useState("");
 
+  const eventOptions = [
+    "Tech Fest 2025",
+    "Cultural Night",
+    "Workshop on AI",
+    "Sports Meet",
+    "Alumni Meet",
+  ];
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -40,15 +48,21 @@ const FeedbackForm = () => {
       </h2>
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        <motion.input
+        {/* Dropdown for selecting event */}
+        <motion.select
           whileFocus={{ scale: 1.03 }}
-          type="text"
-          placeholder="Event Name"
           value={eventName}
           onChange={(e) => setEventName(e.target.value)}
           required
-          className="w-full p-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-400 shadow-md transition"
-        />
+          className="w-full p-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-400 shadow-md transition bg-white"
+        >
+          <option value="">Select Event</option>
+          {eventOptions.map((event, index) => (
+            <option key={index} value={event}>
+              {event}
+            </option>
+          ))}
+        </motion.select>
 
         <div>
           <p className="text-sm text-gray-700 mb-1">Rate this event</p>
@@ -81,14 +95,14 @@ const FeedbackForm = () => {
           className="w-full p-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-green-400 shadow-md transition resize-none"
         />
 
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          type="submit"
-          className="w-full bg-blue-500 text-white py-3 rounded-xl shadow-xl hover:bg-blue-600 transition"
-        >
-          🚀 Submit
-        </motion.button>
+<motion.button
+  whileHover={{ scale: 1.05 }}
+  whileTap={{ scale: 0.95 }}
+  type="submit"
+  className="w-full bg-blue-500 text-white py-3 rounded-xl shadow-xl hover:bg-blue-600 transition mb-8" // 👈 added mb-8 here
+>
+  🚀 Submit
+</motion.button>
       </form>
 
       {message && (
